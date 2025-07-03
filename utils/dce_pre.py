@@ -32,6 +32,10 @@ def pre_dce(SUBJECT_DIR,fname,byMRI,MRI,step=0):
         t['warpedmovout'].to_file(SUBJECT_DIR+'/avg.nii.gz')
         img_mc_=ants.apply_transforms(mri,img_mc,t['fwdtransforms'],'bSpline',3)
     else:
+        img_data = img_mc.numpy()
+        average_tmp_data = np.mean(img_data[:,:,:,0:5], 3)
+        avg=meta_copy_4Dto3D(img_mc,average_tmp_data)
+        avg.to_file(SUBJECT_DIR+'/avg.nii.gz')
         img_mc_=img_mc
     img_mc_.to_file(SUBJECT_DIR+'/dce_mc.nii.gz')
 
