@@ -1,2 +1,7 @@
 *.nii
 *.nii.gz
+*.png
+*.xml
+*.csv
+*.json
+*.iml
