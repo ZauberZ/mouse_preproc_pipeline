@@ -1,0 +1,5 @@
+ants==0.0.7
+matplotlib==3.8.4
+numpy==2.3.1
+pandas==2.3.0
+termcolor==3.1.0
