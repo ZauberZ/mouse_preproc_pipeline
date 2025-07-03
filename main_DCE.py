@@ -1,6 +1,6 @@
 from utils.dce_pre import pre_dce, normalize_toTMP
 
-# subject path (it must contain MRI bold file, and the file suffix ends with .nii or .nii.gz)
+# subject path (it must contain MRI dce file, and the file suffix ends with .nii or .nii.gz)
 SUBJECT_DIR='/media/zzb/data/mouse/data/dce/'
 # The full name of the subject contains a suffix (The file name of MRI dce in SUBJECT_DIR)
 # e.g. dce.nii or dce.nii.gz

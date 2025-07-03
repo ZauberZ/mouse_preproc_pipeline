@@ -37,6 +37,7 @@ def pre_fMRI(SUBJECT_DIR,fname,byMRI,MRI,step=0):
         img_data = img_mc.numpy()
         average_tmp_data = np.mean(img_data[:,:,:,0:5], 3)
         avg=meta_copy_4Dto3D(img_mc,average_tmp_data)
+        avg.to_file(SUBJECT_DIR+'/avg.nii.gz')
         img_mc_=img_mc
     img_mc_.to_file(SUBJECT_DIR+'/bold_mc.nii.gz')
 

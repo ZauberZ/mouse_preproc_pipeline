@@ -6,3 +6,4 @@
 *.json
 *.iml
 main_fMRI_.py
+test.py
