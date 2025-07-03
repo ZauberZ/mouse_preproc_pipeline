@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+"""
+@Project ：mouse_preproc_pipeline
+@File    ：dce_pre.py
+@Author  ：Zauber
+@Date    ：2025/7/2 22:43
+"""
 import ants
 import numpy as np
 from utils.util import meta_copy_4Dto3D
@@ -7,7 +15,7 @@ def pre_dce(SUBJECT_DIR,fname,byMRI,MRI,step=0):
     if step == 0:
         img = ants.image_read(SUBJECT_DIR + '/'+fname)
     else:
-        img=ants.image_read(SUBJECT_DIR+'/bold_mc.nii.gz')
+        img=ants.image_read(SUBJECT_DIR+'/dec_mc.nii.gz')
     img_mc=ants.motion_correction(img)
     img_mc=img_mc['motion_corrected']
     if byMRI:
@@ -27,7 +35,7 @@ def pre_dce(SUBJECT_DIR,fname,byMRI,MRI,step=0):
         img_mc_=img_mc
     img_mc_.to_file(SUBJECT_DIR+'/dce_mc.nii.gz')
 
-def normalize_toTMP(SUBJECT_DIR,template_path,atlas_path,byMRI,MRI,MRI_mask):
+def normalize_toTMP(SUBJECT_DIR,template_path,atlas_path,byMRI,MRI):
     print(colored('normalize to template space, please wait...', "red"))
     tmp=ants.image_read(template_path)
     atlas = ants.image_read(atlas_path)

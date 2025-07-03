@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 """
 @Project ：mouse_preproc_pipeline
-@File    ：fMRI_preproc.py
+@File    ：util.py
 @Author  ：Zauber
 @Date    ：2025/3/6 22:45
 """
