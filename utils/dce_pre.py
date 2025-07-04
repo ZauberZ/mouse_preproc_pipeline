@@ -3,7 +3,6 @@
 """
 @Project ：mouse_preproc_pipeline
 @File    ：dce_pre.py
-@Author  ：Zauber
 @Date    ：2025/7/2 22:43
 """
 import ants
@@ -12,6 +11,7 @@ from utils.util import meta_copy_4Dto3D
 from termcolor import colored
 
 def pre_dce(SUBJECT_DIR,fname,byMRI,MRI,step=0):
+    print('preproc dce')
     if step == 0:
         img = ants.image_read(SUBJECT_DIR + '/'+fname)
     else:
@@ -19,13 +19,14 @@ def pre_dce(SUBJECT_DIR,fname,byMRI,MRI,step=0):
     img_mc=ants.motion_correction(img)
     img_mc=img_mc['motion_corrected']
     if byMRI:
+        print('Reg by self-individual MRI')
         img_data = img_mc.numpy()
         average_tmp_data = np.mean(img_data[:,:,:,0:5], 3)
         avg=meta_copy_4Dto3D(img_mc,average_tmp_data)
         mri=ants.image_read(SUBJECT_DIR+'/'+MRI)
         mtmp=ants.image_read('template/MTMP/mouse_template_0.2mm.nii.gz')
         mask = ants.image_read('template/MTMP/Brain_mask_0.2mm.nii.gz')
-        tt = ants.registration(mtmp, mri, 'SyN')
+        tt = ants.registration(mtmp, mri, 'SyN',reg_iterations=(40, 20, 20))
         mask_=ants.apply_transforms(mri, mask, tt['invtransforms'], 'multiLabel')
         mask_.to_file(SUBJECT_DIR+'/MRI_mask.nii.gz')
         t=ants.registration(mri,avg,'Similarity')
@@ -43,6 +44,7 @@ def normalize_toTMP(SUBJECT_DIR,template_path,atlas_path,byMRI,MRI):
     print(colored('normalize to template space, please wait...', "red"))
     tmp=ants.image_read(template_path)
     atlas = ants.image_read(atlas_path)
+    dce=ants.image_read(SUBJECT_DIR+'/dce_mc.nii.gz')
     if byMRI:
         mask=ants.image_read(SUBJECT_DIR+'/MRI_mask.nii.gz')
         img=ants.image_read(SUBJECT_DIR+'/'+MRI)
@@ -52,6 +54,8 @@ def normalize_toTMP(SUBJECT_DIR,template_path,atlas_path,byMRI,MRI):
     t=ants.registration(tmp,img,type_of_transform='SyN')
     img_ = ants.apply_transforms(tmp, img, t['fwdtransforms'], interpolator='bSpline')
     atlas_=ants.apply_transforms(img,atlas,t['invtransforms'],interpolator='multiLabel')
+    dce_ = ants.apply_transforms(tmp, dce, t['fwdtransforms'], interpolator='bSpline',imagetype=3)
     atlas_.to_file(SUBJECT_DIR+'/atlas.nii.gz')
     img_.to_file(SUBJECT_DIR+'/img_inTMP.nii.gz')
+    dce_.to_file(SUBJECT_DIR+'/dce_inTMP.nii.gz')
     print(colored('normalize to template space end', "green"))

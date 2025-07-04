@@ -3,7 +3,6 @@
 """
 @Project ：mouse_preproc_pipeline
 @File    ：fMRI_pre.py
-@Author  ：Zauber
 @Date    ：2025/3/6 22:43
 """
 import matplotlib.pyplot as plt
@@ -14,6 +13,7 @@ from utils.util import get_mask, meta_copy_4Dto3D
 
 
 def pre_fMRI(SUBJECT_DIR,fname,byMRI,MRI,step=0):
+    print('preproc bold')
     if step == 0:
         img = ants.image_read(SUBJECT_DIR + '/'+fname)
     else:
@@ -127,6 +127,7 @@ def normalize_toTMP(SUBJECT_DIR,template_path,atlas_path,byMRI,MRI):
     print(colored('normalize to template space, please wait...', "red"))
     tmp=ants.image_read(template_path)
     atlas = ants.image_read(atlas_path)
+    bold = ants.image_read(SUBJECT_DIR+'/bold_mc')
     if byMRI:
         mask=ants.image_read(SUBJECT_DIR+'/MRI_mask.nii.gz')
         img=ants.image_read(SUBJECT_DIR+'/'+MRI)
@@ -136,6 +137,8 @@ def normalize_toTMP(SUBJECT_DIR,template_path,atlas_path,byMRI,MRI):
     t=ants.registration(tmp,img,type_of_transform='SyN')
     img_ = ants.apply_transforms(tmp, img, t['fwdtransforms'], interpolator='bSpline')
     atlas_=ants.apply_transforms(img,atlas,t['invtransforms'],interpolator='multiLabel')
+    bold_ = ants.apply_transforms(tmp, bold, t['fwdtransforms'], interpolator='bSpline',imagetype=3)
     atlas_.to_file(SUBJECT_DIR+'/atlas.nii.gz')
     img_.to_file(SUBJECT_DIR+'/img_inTMP.nii.gz')
+    bold_.to_file(SUBJECT_DIR+'/bold_inTMP.nii.gz')
     print(colored('normalize to template space end', "green"))
